@@ -1,0 +1,74 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+.Python
+env/
+venv/
+.venv/
+
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =========================
+# Env
+# =========================
+.env
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Docker
+# =========================
+*.log
+
+# =========================
+# AI / ML ARTIFACTS (CRÍTICO EN TU PROYECTO)
+# =========================
+
+# Modelos de embeddings (NO versionar)
+backend/ai_models/
+**/ai_models/
+
+# Índices vectoriales HNSW (NO versionar)
+backend/indexes/
+**/indexes/
+
+# Cache de transformers
+.cache/
+huggingface/
+transformers_cache/
+
+# =========================
+# Node (frontend si lo activas)
+# =========================
+node_modules/
+dist/
+build/
+
+# =========================
+# n8n data local (opcional)
+# =========================
+n8n_data/
+
+# =========================
+# DB dumps (si generas backups locales)
+# =========================
+*.sql.bak
+*.dump
