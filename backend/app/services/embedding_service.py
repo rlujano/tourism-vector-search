@@ -1,32 +1,30 @@
-from sentence_transformers import SentenceTransformer
-import numpy as np
 import os
+from typing import Optional
+
+import numpy as np
+from sentence_transformers import SentenceTransformer
 
 
 class EmbeddingService:
+    def __init__(self, model_path: Optional[str] = None):
+        self.model_path = model_path or "/app/ai_models/all-MiniLM-L6-v2"
+        self._model = None
 
-    def __init__(self):
+    def _get_model(self):
+        if self._model is None:
+            if not os.path.exists(self.model_path):
+                raise FileNotFoundError(
+                    f"El modelo no existe en {self.model_path}. Ejecuta primero download_model.py"
+                )
 
-        model_path = "/app/ai_models/all-MiniLM-L6-v2"
+            self._model = SentenceTransformer(self.model_path)
 
-        if not os.path.exists(model_path):
-            raise Exception(
-                f"El modelo no existe en {model_path}. Ejecuta primero download_model.py"
-            )
-
-        print("Cargando modelo local...")
-
-        self.model = SentenceTransformer(model_path)
-
-        print("Modelo cargado.")
+        return self._model
 
     def encode(self, text: str):
+        if not text or not str(text).strip():
+            return np.zeros(384, dtype=np.float32)
 
-        vector = self.model.encode(
-            text,
-            convert_to_numpy=True
-        )
-
-        vector = vector / np.linalg.norm(vector)
-
-        return vector
+        model = self._get_model()
+        vector = model.encode(text, convert_to_numpy=True, normalize_embeddings=True)
+        return np.asarray(vector, dtype=np.float32)

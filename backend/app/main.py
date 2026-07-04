@@ -1,7 +1,17 @@
 from fastapi import FastAPI
-from app.api import health, search, index, attractions
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from app.api import attractions, health, index, search
+
+app = FastAPI(title="Tourism Vector Search")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(health.router)
 app.include_router(search.router)
