@@ -5,6 +5,27 @@ import unittest
 
 fastapi_module = types.ModuleType("fastapi")
 
+numpy_module = types.ModuleType("numpy")
+numpy_module.asarray = lambda value, dtype=None: value
+numpy_module.zeros = lambda *shape, **kwargs: [0.0] * (shape[0] if shape else 384)
+sys.modules.setdefault("numpy", numpy_module)
+
+sentence_transformers_module = types.ModuleType("sentence_transformers")
+
+
+class DummySentenceTransformer:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def encode(self, texts, convert_to_numpy=True, normalize_embeddings=True):
+        if isinstance(texts, str):
+            return [0.0] * 384
+        return [[0.0] * 384 for _ in texts]
+
+
+sentence_transformers_module.SentenceTransformer = DummySentenceTransformer
+sys.modules.setdefault("sentence_transformers", sentence_transformers_module)
+
 
 class Query:
     def __init__(self, default=None, min_length=None):
@@ -53,6 +74,50 @@ class SearchScoreTests(unittest.TestCase):
 
         self.assertEqual(response["query"], "lugares arqueologicos en peru")
         self.assertGreater(response["results"][0]["score"], 0.0)
+
+    def test_food_query_prioritizes_food_related_results(self):
+        attractions = [
+            Attraction(
+                id=1,
+                name="Lago Titicaca",
+                description="Gran lago andino con paisajes impresionantes",
+                location="Puno",
+                latitude=0.0,
+                longitude=0.0,
+                category="Naturaleza",
+                image_url="https://example.com/titicaca.jpg",
+            ),
+            Attraction(
+                id=2,
+                name="Valle del Mantaro",
+                description="Región andina reconocida por su gastronomía típica basada en la papa",
+                location="Junín",
+                latitude=0.0,
+                longitude=0.0,
+                category="Cultural",
+                image_url="https://example.com/mantaro.jpg",
+            ),
+            Attraction(
+                id=3,
+                name="Restaurante El Sol",
+                description="Restaurante tradicional con comida andina y platos típicos",
+                location="Cusco",
+                latitude=0.0,
+                longitude=0.0,
+                category="Restaurante",
+                image_url="https://example.com/restaurante.jpg",
+            ),
+        ]
+
+        search_module.repository.find_all = lambda: attractions
+        search_module.embedding_service.encode = lambda text: [0.1] * 384
+        search_module.vector_service.search = lambda vector, k=5: ([0, 1, 2], [0.2, 0.2, 0.2])
+
+        response = search_module.search("comida andina")
+        top_names = [result["name"] for result in response["results"]]
+
+        self.assertIn("Restaurante El Sol", top_names)
+        self.assertLess(top_names.index("Restaurante El Sol"), top_names.index("Lago Titicaca"))
 
 
 if __name__ == "__main__":

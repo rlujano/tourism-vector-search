@@ -1,18 +1,20 @@
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 
-MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+# CAMBIO: Usamos el modelo optimizado para más de 50 idiomas (incluido el español)
+MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
-MODEL_DIR = Path("/app/ai_models/all-MiniLM-L6-v2")
+# CAMBIO: Actualizamos la ruta de la carpeta para el nuevo modelo
+MODEL_DIR = Path("/app/ai_models/paraphrase-multilingual-MiniLM-L12-v2")
 
 
 def main():
 
     if MODEL_DIR.exists():
-        print("✅ El modelo ya existe.")
+        print("✅ El modelo multilingüe ya existe.")
         return
 
-    print("⬇ Descargando modelo...")
+    print("⬇ Descargando modelo multilingüe (esto puede tardar un poco más)...")
 
     model = SentenceTransformer(MODEL_NAME)
 
@@ -20,7 +22,7 @@ def main():
 
     model.save(str(MODEL_DIR))
 
-    print("✅ Modelo guardado correctamente en:")
+    print("✅ Modelo multilingüe guardado correctamente en:")
     print(MODEL_DIR)
 
 

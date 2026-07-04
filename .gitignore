@@ -72,3 +72,5 @@ n8n_data/
 # =========================
 *.sql.bak
 *.dump
+
+*/indexes/*.index

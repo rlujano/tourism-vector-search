@@ -1,8 +1,10 @@
-from app.repositories.attraction_repository import AttractionRepository
-from app.services.embedding_service import EmbeddingService
+import os
+
 import hnswlib
 import numpy as np
-import os
+
+from app.repositories.attraction_repository import AttractionRepository
+from app.services.embedding_service import EmbeddingService
 
 
 def main():
@@ -26,16 +28,32 @@ def main():
 
     dim = embeddings.shape[1]
 
+    m = int(os.getenv("HNSW_M", "64"))
+    ef_construction = int(os.getenv("HNSW_EF_CONSTRUCTION", "200"))
+    mmax0 = int(os.getenv("HNSW_MMAX0", "40"))
+
     index = hnswlib.Index(space='cosine', dim=dim)
-    index.init_index(max_elements=len(attractions), ef_construction=200, M=16)
+    init_kwargs = {
+        "max_elements": len(attractions),
+        "M": m,
+        "ef_construction": ef_construction,
+    }
+
+    try:
+        index.init_index(**init_kwargs, Mmax0=mmax0)
+        used_mmax0 = mmax0
+    except TypeError:
+        index.init_index(**init_kwargs)
+        used_mmax0 = "default"
 
     index.add_items(embeddings, np.arange(len(attractions)))
 
-    os.makedirs("/app/indexes", exist_ok=True)
+    index_path = os.getenv("VECTOR_INDEX_PATH", "/app/indexes/destinos.index")
+    os.makedirs(os.path.dirname(index_path), exist_ok=True)
 
-    index.save_index("/app/indexes/destinos.index")
+    index.save_index(index_path)
 
-    print("Índice vectorial construido correctamente.")
+    print(f"Índice vectorial construido correctamente con M={m}, ef_construction={ef_construction}, Mmax0={used_mmax0}")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,8 @@ from sentence_transformers import SentenceTransformer
 
 class EmbeddingService:
     def __init__(self, model_path: Optional[str] = None):
-        self.model_path = model_path or "/app/ai_models/all-MiniLM-L6-v2"
+        # 1. MODIFICAR: Cambiar la ruta por defecto a la del nuevo modelo multilingüe
+        self.model_path = model_path or "/app/ai_models/paraphrase-multilingual-MiniLM-L12-v2"
         self._model = None
 
     def _get_model(self):
@@ -22,6 +23,8 @@ class EmbeddingService:
         return self._model
 
     def encode(self, text: str):
+        # 2. MODIFICAR: El nuevo modelo genera 768 dimensiones (no 384). 
+        # Si el texto está vacío, debemos devolver un vector de ceros del tamaño correcto.
         if not text or not str(text).strip():
             return np.zeros(384, dtype=np.float32)
 
