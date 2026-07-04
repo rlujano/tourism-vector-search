@@ -61,15 +61,9 @@ function App() {
   return (
     <div className="app-shell">
       <header className="hero">
+        <div className="app-shell"><h1>Explore The World</h1></div>
         <div className="hero-copy">
-          <p className="eyebrow">Tourism Vector Search</p>
-          <h1>Descubre destinos con búsquedas inteligentes</h1>
-          <p className="hero-text">
-            Busca atractivos turísticos por significado, contexto y ubicación con el motor de búsqueda semántico del proyecto.
-          </p>
-
           <SearchForm query={query} onQueryChange={setQuery} onSubmit={handleSearch} loading={loading} />
-
           <div className="suggestions">
             {SAMPLE_QUERIES.map((item) => (
               <button key={item} type="button" onClick={() => setQuery(item)}>
@@ -79,7 +73,6 @@ function App() {
           </div>
         </div>
 
-        <StatusCard status={status} apiBase={API_BASE} />
       </header>
 
       <main className="results-section">
