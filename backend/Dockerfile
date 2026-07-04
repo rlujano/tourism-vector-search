@@ -1,10 +1,8 @@
 FROM python:3.11-slim
 
-# Evita crear archivos .pyc y fuerza salida inmediata de logs
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Directorio de trabajo
 WORKDIR /app
 
 # Dependencias del sistema
@@ -16,17 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
-# Copiar e instalar dependencias de Python
 COPY requirements.txt .
 
 RUN pip install --upgrade pip
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copiar el proyecto
 COPY . .
-
-# Directorios persistentes
 RUN mkdir -p /app/indexes
 RUN mkdir -p /app/ai_models
 
