@@ -28,9 +28,9 @@ def main():
 
     dim = embeddings.shape[1]
 
-    m = int(os.getenv("HNSW_M", "64"))
-    ef_construction = int(os.getenv("HNSW_EF_CONSTRUCTION", "200"))
-    mmax0 = int(os.getenv("HNSW_MMAX0", "40"))
+    m = int(48)
+    ef_construction = int(500)
+    mmax0 = int(40)
 
     index = hnswlib.Index(space='cosine', dim=dim)
     init_kwargs = {

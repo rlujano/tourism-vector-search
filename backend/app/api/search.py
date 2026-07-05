@@ -29,7 +29,7 @@ def search(q: str = Query(..., min_length=1)):
         query_vector = embedding_service.encode(query_text)
         # 2. CAMBIO CRÍTICO: Pedimos k=25 vecinos a HNSW en lugar de 5 (Over-sampling).
         # Esto asegura que los destinos de Puno entren en la lista de candidatos semánticos.
-        labels, distances = vector_service.search(query_vector, k=min(25, len(results)))
+        labels, distances = vector_service.search(query_vector, k=min(50, len(results)))
     except Exception:
         labels, distances = [], []
 
