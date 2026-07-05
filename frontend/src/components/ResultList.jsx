@@ -31,7 +31,7 @@ function ResultList({ results }) {
               <p>{item.description}</p>
 
               <div className="meta">
-                <span>📍 {item.location}</span>
+                <span>{item.location}</span>
               </div>
             </div>
           </article>

@@ -23,7 +23,6 @@ class EmbeddingService:
         return self._model
 
     def encode(self, text: str):
-        # 2. MODIFICAR: El nuevo modelo genera 768 dimensiones (no 384). 
         # Si el texto está vacío, debemos devolver un vector de ceros del tamaño correcto.
         if not text or not str(text).strip():
             return np.zeros(384, dtype=np.float32)
